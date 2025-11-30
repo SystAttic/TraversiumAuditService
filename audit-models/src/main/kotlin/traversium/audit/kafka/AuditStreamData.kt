@@ -38,7 +38,8 @@ data class AuditStreamData(
  */
 enum class ActivityType {
     USER_ACTIVITY,
-    TRIP_ACTIVITY
+    TRIP_ACTIVITY,
+    SOCIAL_ACTIVITY
 }
 
 /**
@@ -51,6 +52,8 @@ enum class EntityType {
     MOMENT,
     PHOTO,
     COLLABORATOR,
-    VIEWER
+    VIEWER,
+    LIKE,
+    COMMENT
 }
 

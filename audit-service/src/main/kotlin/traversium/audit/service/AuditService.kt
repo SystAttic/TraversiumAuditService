@@ -5,8 +5,10 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import traversium.audit.db.model.SocialActivity
 import traversium.audit.db.model.TripActivity
 import traversium.audit.db.model.UserActivity
+import traversium.audit.db.repository.SocialActivityRepository
 import traversium.audit.db.repository.TripActivityRepository
 import traversium.audit.db.repository.UserActivityRepository
 import traversium.audit.kafka.AuditStreamData
@@ -20,6 +22,7 @@ import java.time.OffsetDateTime
 class AuditService(
     private val userActivityRepository: UserActivityRepository,
     private val tripActivityRepository: TripActivityRepository,
+    private val socialActivityRepository: SocialActivityRepository,
     private val objectMapper: ObjectMapper
 ) {
 
@@ -174,6 +177,63 @@ class AuditService(
         val byTimeRange = tripActivityRepository.findByTripIdAndTimestampBetween(tripId, startTime, endTime, pageable)
         val filtered = byTimeRange.content.filter { it.action == action }
         return org.springframework.data.domain.PageImpl(filtered, pageable, filtered.size.toLong())
+    }
+
+    /**
+     * Saves a social activity audit event
+     */
+    @Transactional
+    fun saveSocialActivity(streamData: AuditStreamData): SocialActivity {
+        val metadataJson = streamData.metadata?.let { objectMapper.writeValueAsString(it) }
+        
+        // Extract mediaId from metadata if available
+        val mediaId = streamData.metadata?.get("mediaId")?.let {
+            when (it) {
+                is Number -> it.toLong()
+                is String -> it.toLongOrNull()
+                else -> null
+            }
+        }
+        
+        val socialActivity = SocialActivity(
+            userId = streamData.userId,
+            action = streamData.action,
+            entityType = streamData.entityType?.name,
+            entityId = streamData.entityId,
+            mediaId = mediaId,
+            tripId = streamData.tripId,
+            metadata = metadataJson,
+            timestamp = streamData.timestamp ?: OffsetDateTime.now()
+        )
+        
+        return socialActivityRepository.save(socialActivity)
+    }
+
+    // Query methods for SocialActivity
+
+    fun getSocialActivities(userId: String, pageable: Pageable): Page<SocialActivity> {
+        return socialActivityRepository.findByUserId(userId, pageable)
+    }
+
+    fun getSocialActivitiesByAction(userId: String, action: String, pageable: Pageable): Page<SocialActivity> {
+        return socialActivityRepository.findByUserIdAndAction(userId, action, pageable)
+    }
+
+    fun getSocialActivitiesByMedia(mediaId: Long, pageable: Pageable): Page<SocialActivity> {
+        return socialActivityRepository.findByMediaId(mediaId, pageable)
+    }
+
+    fun getSocialActivitiesByTrip(tripId: Long, pageable: Pageable): Page<SocialActivity> {
+        return socialActivityRepository.findByTripId(tripId, pageable)
+    }
+
+    fun getSocialActivitiesByTimeRange(
+        userId: String,
+        startTime: OffsetDateTime,
+        endTime: OffsetDateTime,
+        pageable: Pageable
+    ): Page<SocialActivity> {
+        return socialActivityRepository.findByUserIdAndTimestampBetween(userId, startTime, endTime, pageable)
     }
 }
 
