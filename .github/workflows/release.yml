@@ -97,7 +97,7 @@ jobs:
         run: mvn clean package -DskipTests
         env:
           GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.PACKAGE_READ_TOKE }}
+          GITHUB_TOKEN: ${{ secrets.PACKAGE_READ_TOKEN }}
 
       - name: Deploy parent pom to GitHub Packages
         run: |
@@ -180,7 +180,7 @@ jobs:
             ```xml
             <parent>
               <groupId>traversium</groupId>
-              <artifactId>audit-parent</artifactId>
+              <artifactId>AuditService</artifactId>
               <version>${{ steps.versions.outputs.release_version }}</version>
             </parent>
             ```
@@ -195,4 +195,3 @@ jobs:
             ```
           draft: false
           prerelease: false
-
