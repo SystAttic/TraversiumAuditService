@@ -50,7 +50,7 @@ jobs:
           echo "Release version: $RELEASE_VERSION"
         env:
           GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.PACKAGE_READ_TOKE }}
+          GITHUB_TOKEN: ${{ secrets.PACKAGE_READ_TOKEN }}
 
       - name: Extract release notes from CHANGELOG
         id: changelog
