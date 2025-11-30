@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
+import traversium.audit.security.MockFirebaseConfig
 import traversium.audit.security.TestMultitenancyConfig
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
@@ -12,6 +13,7 @@ import traversium.audit.security.TestMultitenancyConfig
 @SpringBootTest(
     classes = [
         AuditApplication::class,
+        MockFirebaseConfig::class,
         TestMultitenancyConfig::class
     ]
 )

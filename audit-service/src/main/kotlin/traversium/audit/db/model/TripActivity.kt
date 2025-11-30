@@ -35,10 +35,10 @@ data class TripActivity(
     @Column(name = "entity_id")
     val entityId: Long? = null,
 
-    @Column(name = "metadata", columnDefinition = "jsonb")
+    @Column(name = "metadata", length = 10000)
     val metadata: String? = null,
 
-    @Column(name = "state_snapshot", columnDefinition = "jsonb")
+    @Column(name = "state_snapshot", length = 10000)
     val stateSnapshot: String? = null,
 
     @Column(name = "timestamp", nullable = false)

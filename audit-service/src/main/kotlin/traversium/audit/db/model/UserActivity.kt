@@ -30,7 +30,7 @@ data class UserActivity(
     @Column(name = "entity_id")
     val entityId: Long? = null,
 
-    @Column(name = "metadata", columnDefinition = "jsonb")
+    @Column(name = "metadata", length = 10000)
     val metadata: String? = null,
 
     @Column(name = "timestamp", nullable = false)
