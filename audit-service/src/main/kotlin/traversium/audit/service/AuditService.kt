@@ -47,22 +47,22 @@ class AuditService(
      */
     @Transactional
     fun saveTripActivity(streamData: AuditStreamData): TripActivity {
-        requireNotNull(streamData.tripId) { "Trip ID is required for trip activity" }
+        val tripId = requireNotNull(streamData.tripId) { "Trip ID is required for trip activity" }
         
         val metadataJson = streamData.metadata?.let { objectMapper.writeValueAsString(it) }
         
         // Get the latest event version for this trip to maintain event ordering
         val latestEvent = tripActivityRepository
-            .findByTripIdOrderByTimestampAscEventVersionAsc(streamData.tripId)
+            .findByTripIdOrderByTimestampAscEventVersionAsc(tripId)
             .lastOrNull()
         
         val nextVersion = (latestEvent?.eventVersion ?: 0) + 1
         
         // Create state snapshot if this is a significant state change
-        val stateSnapshot = createStateSnapshotIfNeeded(streamData, metadataJson)
+        val stateSnapshot = createStateSnapshotIfNeeded(streamData, tripId, metadataJson)
         
         val tripActivity = TripActivity(
-            tripId = streamData.tripId,
+            tripId = tripId,
             userId = streamData.userId,
             action = streamData.action,
             entityType = streamData.entityType?.name,
@@ -82,6 +82,7 @@ class AuditService(
      */
     private fun createStateSnapshotIfNeeded(
         streamData: AuditStreamData,
+        tripId: Long,
         metadataJson: String?
     ): String? {
         // Create snapshots for major state changes
@@ -98,7 +99,7 @@ class AuditService(
         return if (snapshotActions.contains(streamData.action.uppercase())) {
             // Store the current state as JSON snapshot
             val snapshot = mapOf(
-                "tripId" to streamData.tripId,
+                "tripId" to tripId,
                 "action" to streamData.action,
                 "timestamp" to (streamData.timestamp ?: OffsetDateTime.now()).toString(),
                 "metadata" to (streamData.metadata ?: emptyMap())
