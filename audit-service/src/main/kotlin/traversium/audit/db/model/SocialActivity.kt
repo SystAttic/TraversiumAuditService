@@ -1,6 +1,8 @@
 package traversium.audit.db.model
 
 import jakarta.persistence.*
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 import java.time.OffsetDateTime
 
 /**
@@ -39,7 +41,8 @@ data class SocialActivity(
     @Column(name = "trip_id")
     val tripId: Long? = null,
 
-    @Column(name = "metadata", length = 10000)
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "metadata")
     val metadata: String? = null,
 
     @Column(name = "timestamp", nullable = false)
