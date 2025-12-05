@@ -235,5 +235,28 @@ class AuditService(
     ): Page<SocialActivity> {
         return socialActivityRepository.findByUserIdAndTimestampBetween(userId, startTime, endTime, pageable)
     }
+
+    // Methods for backup service - fetch all activities by date range
+
+    fun getAllUserActivitiesByDateRange(
+        startTime: OffsetDateTime,
+        endTime: OffsetDateTime
+    ): List<UserActivity> {
+        return userActivityRepository.findAllByTimestampBetween(startTime, endTime)
+    }
+
+    fun getAllTripActivitiesByDateRange(
+        startTime: OffsetDateTime,
+        endTime: OffsetDateTime
+    ): List<TripActivity> {
+        return tripActivityRepository.findAllByTimestampBetween(startTime, endTime)
+    }
+
+    fun getAllSocialActivitiesByDateRange(
+        startTime: OffsetDateTime,
+        endTime: OffsetDateTime
+    ): List<SocialActivity> {
+        return socialActivityRepository.findAllByTimestampBetween(startTime, endTime)
+    }
 }
 

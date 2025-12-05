@@ -35,5 +35,16 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long> {
         @Param("userId") userId: String,
         @Param("since") since: OffsetDateTime
     ): List<UserActivity>
+    
+    @Query("""
+        SELECT ua FROM UserActivity ua
+        WHERE ua.timestamp >= :startTime
+        AND ua.timestamp <= :endTime
+        ORDER BY ua.timestamp ASC
+    """)
+    fun findAllByTimestampBetween(
+        @Param("startTime") startTime: OffsetDateTime,
+        @Param("endTime") endTime: OffsetDateTime
+    ): List<UserActivity>
 }
 

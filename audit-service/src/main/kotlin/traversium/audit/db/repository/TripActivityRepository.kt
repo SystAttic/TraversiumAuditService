@@ -61,5 +61,16 @@ interface TripActivityRepository : JpaRepository<TripActivity, Long> {
     ): List<TripActivity>
     
     fun findByTripIdOrderByTimestampAscEventVersionAsc(tripId: Long): List<TripActivity>
+    
+    @Query("""
+        SELECT ta FROM TripActivity ta
+        WHERE ta.timestamp >= :startTime
+        AND ta.timestamp <= :endTime
+        ORDER BY ta.timestamp ASC, ta.eventVersion ASC
+    """)
+    fun findAllByTimestampBetween(
+        @Param("startTime") startTime: OffsetDateTime,
+        @Param("endTime") endTime: OffsetDateTime
+    ): List<TripActivity>
 }
 

@@ -27,6 +27,7 @@ class SecurityConfiguration {
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth
+                    .requestMatchers("/api/audit/backup/**").permitAll()
                     .requestMatchers("/api/audit/**").authenticated()
                     .anyRequest().permitAll()
             }

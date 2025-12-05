@@ -79,7 +79,8 @@ class FirebaseAuthenticationFilter(
         val prefixPaths = listOf(
             "/swagger-ui",
             "/v3/api-docs",
-            "/swagger-resources"
+            "/swagger-resources",
+            "/api/audit/backup"  // Exclude backup endpoints for service-to-service communication
         )
 
         return path in exactPaths || prefixPaths.any { path.startsWith(it) }

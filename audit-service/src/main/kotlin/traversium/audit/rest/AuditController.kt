@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import traversium.audit.db.model.SocialActivity
 import traversium.audit.db.model.TripActivity
 import traversium.audit.db.model.UserActivity
 import traversium.audit.service.AuditService
@@ -117,6 +118,47 @@ class AuditController(
     ): ResponseEntity<TripRevertResult> {
         val result = tripEventSourcingService.revertTripToState(tripId, revertToTimestamp)
         return ResponseEntity.ok(result)
+    }
+
+    // Backup service endpoints - fetch all activities by date range
+
+    @GetMapping("/backup/user-activities")
+    @Operation(
+        summary = "Get all user activities by date range",
+        description = "Retrieve all user activities within a date range for backup purposes"
+    )
+    fun getAllUserActivitiesForBackup(
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) startTime: OffsetDateTime,
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) endTime: OffsetDateTime
+    ): ResponseEntity<List<UserActivity>> {
+        val activities = auditService.getAllUserActivitiesByDateRange(startTime, endTime)
+        return ResponseEntity.ok(activities)
+    }
+
+    @GetMapping("/backup/trip-activities")
+    @Operation(
+        summary = "Get all trip activities by date range",
+        description = "Retrieve all trip activities within a date range for backup purposes"
+    )
+    fun getAllTripActivitiesForBackup(
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) startTime: OffsetDateTime,
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) endTime: OffsetDateTime
+    ): ResponseEntity<List<TripActivity>> {
+        val activities = auditService.getAllTripActivitiesByDateRange(startTime, endTime)
+        return ResponseEntity.ok(activities)
+    }
+
+    @GetMapping("/backup/social-activities")
+    @Operation(
+        summary = "Get all social activities by date range",
+        description = "Retrieve all social activities within a date range for backup purposes"
+    )
+    fun getAllSocialActivitiesForBackup(
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) startTime: OffsetDateTime,
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) endTime: OffsetDateTime
+    ): ResponseEntity<List<SocialActivity>> {
+        val activities = auditService.getAllSocialActivitiesByDateRange(startTime, endTime)
+        return ResponseEntity.ok(activities)
     }
 }
 
