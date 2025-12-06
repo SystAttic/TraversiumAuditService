@@ -80,7 +80,10 @@ class FirebaseAuthenticationFilter(
             "/swagger-ui",
             "/v3/api-docs",
             "/swagger-resources",
-            "/api/audit/backup"  // Exclude backup endpoints for service-to-service communication
+            "/api/audit/backup",  // Exclude backup endpoints for service-to-service communication
+            "/swagger-resources",
+            "/actuator/health",
+            "/actuator/prometheus"
         )
 
         return path in exactPaths || prefixPaths.any { path.startsWith(it) }

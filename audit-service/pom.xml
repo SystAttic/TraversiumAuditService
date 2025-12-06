@@ -149,6 +149,12 @@
             <version>6.4.4.Final</version>
         </dependency>
 
+        <!-- Prometheus -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
         <!-- Flyway for database migrations -->
         <dependency>
             <groupId>org.flywaydb</groupId>

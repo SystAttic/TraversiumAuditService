@@ -28,6 +28,10 @@ class SecurityConfiguration {
             .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers("/api/audit/backup/**").permitAll()
+                    .requestMatchers("/actuator/health/**").permitAll()
+                    .requestMatchers("/actuator/health").permitAll()
+                    .requestMatchers("/actuator/prometheus/**").permitAll()
+                    .requestMatchers("/actuator/prometheus").permitAll()
                     .requestMatchers("/api/audit/**").authenticated()
                     .anyRequest().permitAll()
             }
