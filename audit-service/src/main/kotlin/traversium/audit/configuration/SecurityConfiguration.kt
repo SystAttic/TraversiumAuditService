@@ -33,6 +33,12 @@ class SecurityConfiguration {
                     .requestMatchers("/actuator/prometheus/**").permitAll()
                     .requestMatchers("/actuator/prometheus").permitAll()
                     .requestMatchers("/api/audit/**").authenticated()
+                    .requestMatchers(
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/swagger-ui.html"
+                    ).permitAll()
                     .anyRequest().permitAll()
             }
             .addFilterBefore(firebaseAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
