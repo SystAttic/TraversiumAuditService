@@ -48,6 +48,9 @@ class KafkaConsumer(
                 ActivityType.SOCIAL_ACTIVITY -> {
                     auditService.saveSocialActivity(payload)
                 }
+                ActivityType.FILE_STORAGE_ACTIVITY -> {
+                    auditService.saveFileStorageActivity(payload)
+                }
             }
             
             logger.info { "Successfully processed audit event for tenant=$tenantId: activityType=${payload.activityType}, action=${payload.action}, offset=${data.offset()}" }

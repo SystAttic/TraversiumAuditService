@@ -133,5 +133,18 @@ object ActivityActionMapper {
             else -> throw IllegalArgumentException("Unknown social activity action: $action")
         }
     }
+
+    /**
+     * Maps file storage activity actions from FileStorageService to FileStorageActivityAction
+     * @param action The action string from FileStorageService
+     * @return The corresponding FileStorageActivityAction
+     */
+    fun mapFileStorageActivityActivityAction(action: String): FileStorageActivityAction {
+        return when (action.uppercase()) {
+            "FILE_UPLOADED" -> FileStorageActivityAction.FILE_UPLOADED
+            "FILE_DELETED" -> FileStorageActivityAction.FILE_DELETED
+            else -> throw IllegalArgumentException("Unknown social activity action: $action")
+        }
+    }
 }
 

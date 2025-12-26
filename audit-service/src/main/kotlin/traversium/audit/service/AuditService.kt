@@ -5,9 +5,11 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import traversium.audit.db.model.FileStorageActivity
 import traversium.audit.db.model.SocialActivity
 import traversium.audit.db.model.TripActivity
 import traversium.audit.db.model.UserActivity
+import traversium.audit.db.repository.FileStorageActivityRepository
 import traversium.audit.db.repository.SocialActivityRepository
 import traversium.audit.db.repository.TripActivityRepository
 import traversium.audit.db.repository.UserActivityRepository
@@ -23,6 +25,7 @@ class AuditService(
     private val userActivityRepository: UserActivityRepository,
     private val tripActivityRepository: TripActivityRepository,
     private val socialActivityRepository: SocialActivityRepository,
+    private val fileStorageActivityRepository: FileStorageActivityRepository,
     private val objectMapper: ObjectMapper
 ) {
 
@@ -236,6 +239,54 @@ class AuditService(
         return socialActivityRepository.findByUserIdAndTimestampBetween(userId, startTime, endTime, pageable)
     }
 
+
+    /**
+     * Saves a social activity audit event
+     */
+    @Transactional
+    fun saveFileStorageActivity(streamData: AuditStreamData): FileStorageActivity {
+        val metadataJson = streamData.metadata?.let { objectMapper.writeValueAsString(it) }
+
+        // Extract filename from metadata
+        val filename = streamData.metadata?.get("filename")?.let {
+            when (it) {
+                is String -> it
+                else -> null
+            }
+        }
+
+        val fileStorageActivity = FileStorageActivity(
+            userId = streamData.userId,
+            action = streamData.action,
+            entityType = streamData.entityType?.name,
+            entityId = filename,
+            metadata = metadataJson,
+            timestamp = streamData.timestamp ?: OffsetDateTime.now()
+        )
+
+        return fileStorageActivityRepository.save(fileStorageActivity)
+    }
+
+    // Query methods for FileStorageActivity
+
+    fun getFileStorageActivities(userId: String, pageable: Pageable): Page<FileStorageActivity> {
+        return fileStorageActivityRepository.findByUserId(userId, pageable)
+    }
+
+    fun getFileStorageActivitiesByAction(userId: String, action: String, pageable: Pageable): Page<FileStorageActivity> {
+        return fileStorageActivityRepository.findByUserIdAndAction(userId, action, pageable)
+    }
+
+    fun getFileStorageActivitiesByTimeRange(
+        userId: String,
+        startTime: OffsetDateTime,
+        endTime: OffsetDateTime,
+        pageable: Pageable
+    ): Page<FileStorageActivity> {
+        return fileStorageActivityRepository.findByUserIdAndTimestampBetween(userId, startTime, endTime, pageable)
+    }
+
+
     // Methods for backup service - fetch all activities by date range
 
     fun getAllUserActivitiesByDateRange(
@@ -257,6 +308,13 @@ class AuditService(
         endTime: OffsetDateTime
     ): List<SocialActivity> {
         return socialActivityRepository.findAllByTimestampBetween(startTime, endTime)
+    }
+
+    fun getAllFileStorageActivitiesByDateRange(
+        startTime: OffsetDateTime,
+        endTime: OffsetDateTime
+    ): List<FileStorageActivity> {
+        return fileStorageActivityRepository.findAllByTimestampBetween(startTime, endTime)
     }
 }
 
