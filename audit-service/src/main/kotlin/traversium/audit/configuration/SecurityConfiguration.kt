@@ -32,6 +32,7 @@ class SecurityConfiguration {
                     .requestMatchers("/actuator/health").permitAll()
                     .requestMatchers("/actuator/prometheus/**").permitAll()
                     .requestMatchers("/actuator/prometheus").permitAll()
+                    .requestMatchers("/actuator/**").permitAll()
                     .requestMatchers("/api/audit/**").authenticated()
                     .requestMatchers(
                         "/swagger-ui/**",
