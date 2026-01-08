@@ -57,5 +57,24 @@ interface SocialActivityRepository : JpaRepository<SocialActivity, Long> {
         @Param("startTime") startTime: OffsetDateTime,
         @Param("endTime") endTime: OffsetDateTime
     ): List<SocialActivity>
+
+    @Query("SELECT COUNT(sa) FROM SocialActivity sa WHERE sa.action = :action")
+    fun countByAction(@Param("action") action: String): Long
+
+    @Query("SELECT COUNT(sa) FROM SocialActivity sa WHERE sa.action IN :actions")
+    fun countByActionIn(@Param("actions") actions: List<String>): Long
+
+    @Query("SELECT COUNT(sa) FROM SocialActivity sa WHERE sa.action IN :actions AND sa.timestamp >= :startDate AND sa.timestamp <= :endDate")
+    fun countByActionInAndTimestampBetween(
+        @Param("actions") actions: List<String>,
+        @Param("startDate") startDate: OffsetDateTime,
+        @Param("endDate") endDate: OffsetDateTime
+    ): Long
+
+    @Query("SELECT COUNT(sa) FROM SocialActivity sa WHERE sa.timestamp >= :startDate AND sa.timestamp <= :endDate")
+    fun countByTimestampBetween(
+        @Param("startDate") startDate: OffsetDateTime,
+        @Param("endDate") endDate: OffsetDateTime
+    ): Long
 }
 

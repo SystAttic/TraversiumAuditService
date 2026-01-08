@@ -72,5 +72,21 @@ interface TripActivityRepository : JpaRepository<TripActivity, Long> {
         @Param("startTime") startTime: OffsetDateTime,
         @Param("endTime") endTime: OffsetDateTime
     ): List<TripActivity>
+
+    @Query("SELECT COUNT(ta) FROM TripActivity ta WHERE ta.action = :action")
+    fun countByAction(@Param("action") action: String): Long
+
+    @Query("SELECT COUNT(ta) FROM TripActivity ta WHERE ta.action = :action AND ta.timestamp >= :startDate AND ta.timestamp <= :endDate")
+    fun countByActionAndTimestampBetween(
+        @Param("action") action: String,
+        @Param("startDate") startDate: OffsetDateTime,
+        @Param("endDate") endDate: OffsetDateTime
+    ): Long
+
+    @Query("SELECT COUNT(ta) FROM TripActivity ta WHERE ta.timestamp >= :startDate AND ta.timestamp <= :endDate")
+    fun countByTimestampBetween(
+        @Param("startDate") startDate: OffsetDateTime,
+        @Param("endDate") endDate: OffsetDateTime
+    ): Long
 }
 

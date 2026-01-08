@@ -46,5 +46,24 @@ interface UserActivityRepository : JpaRepository<UserActivity, Long> {
         @Param("startTime") startTime: OffsetDateTime,
         @Param("endTime") endTime: OffsetDateTime
     ): List<UserActivity>
+
+    @Query("SELECT COUNT(ua) FROM UserActivity ua WHERE ua.action = :action")
+    fun countByAction(@Param("action") action: String): Long
+
+    @Query("SELECT COUNT(DISTINCT ua.userId) FROM UserActivity ua WHERE ua.timestamp >= :cutoffDate")
+    fun countDistinctUserIdByTimestampAfter(@Param("cutoffDate") cutoffDate: OffsetDateTime): Long
+
+    @Query("SELECT COUNT(ua) FROM UserActivity ua WHERE ua.action = :action AND ua.timestamp >= :startDate AND ua.timestamp <= :endDate")
+    fun countByActionAndTimestampBetween(
+        @Param("action") action: String,
+        @Param("startDate") startDate: OffsetDateTime,
+        @Param("endDate") endDate: OffsetDateTime
+    ): Long
+
+    @Query("SELECT COUNT(ua) FROM UserActivity ua WHERE ua.timestamp >= :startDate AND ua.timestamp <= :endDate")
+    fun countByTimestampBetween(
+        @Param("startDate") startDate: OffsetDateTime,
+        @Param("endDate") endDate: OffsetDateTime
+    ): Long
 }
 

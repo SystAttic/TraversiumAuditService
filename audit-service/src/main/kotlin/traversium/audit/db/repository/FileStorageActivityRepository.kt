@@ -47,4 +47,10 @@ interface FileStorageActivityRepository : JpaRepository<FileStorageActivity, Lon
         @Param("startTime") startTime: OffsetDateTime,
         @Param("endTime") endTime: OffsetDateTime
     ): List<FileStorageActivity>
+
+    @Query("SELECT COUNT(fsa) FROM FileStorageActivity fsa WHERE fsa.timestamp >= :startDate AND fsa.timestamp <= :endDate")
+    fun countByTimestampBetween(
+        @Param("startDate") startDate: OffsetDateTime,
+        @Param("endDate") endDate: OffsetDateTime
+    ): Long
 }
