@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package traversium.audit.metrics;
+
+option java_multiple_files = true;
+option java_package = "traversium.audit.metrics";
+option java_outer_classname = "AuditMetricsProto";
+
+// Service for providing audit metrics to Report Service
+service AuditMetricsService {
+  // Get total users created
+  rpc GetTotalUsersCreated(MetricsRequest) returns (CountResponse);
+  
+  // Get active users (distinct users with activity in the last N days)
+  rpc GetActiveUsers(ActiveUsersRequest) returns (CountResponse);
+  
+  // Get new users created in a date range
+  rpc GetNewUsersInPeriod(DateRangeRequest) returns (CountResponse);
+  
+  // Get total trips created
+  rpc GetTotalTripsCreated(MetricsRequest) returns (CountResponse);
+  
+  // Get trips created in a date range
+  rpc GetTripsCreatedInPeriod(DateRangeRequest) returns (CountResponse);
+  
+  // Get total media files uploaded
+  rpc GetTotalMediaUploaded(MetricsRequest) returns (CountResponse);
+  
+  // Get media uploaded in a date range
+  rpc GetMediaUploadedInPeriod(DateRangeRequest) returns (CountResponse);
+  
+  // Get total storage bytes
+  rpc GetTotalStorageBytes(MetricsRequest) returns (CountResponse);
+  
+  // Get total social interactions
+  rpc GetTotalSocialInteractions(MetricsRequest) returns (CountResponse);
+  
+  // Get total likes
+  rpc GetTotalLikes(MetricsRequest) returns (CountResponse);
+  
+  // Get total comments
+  rpc GetTotalComments(MetricsRequest) returns (CountResponse);
+  
+  // Get social interactions in a date range
+  rpc GetSocialInteractionsInPeriod(DateRangeRequest) returns (CountResponse);
+  
+  // Get total API calls (approximate)
+  rpc GetTotalApiCalls(MetricsRequest) returns (CountResponse);
+  
+  // Get API calls in a date range
+  rpc GetApiCallsInPeriod(DateRangeRequest) returns (CountResponse);
+}
+
+// Request with tenant ID
+message MetricsRequest {
+  string tenant_id = 1;
+}
+
+// Request for active users with days parameter
+message ActiveUsersRequest {
+  string tenant_id = 1;
+  int32 days = 2;
+}
+
+// Request with tenant ID and date range
+message DateRangeRequest {
+  string tenant_id = 1;
+  string start_date = 2; // ISO-8601 format
+  string end_date = 3;   // ISO-8601 format
+}
+
+// Response with count
+message CountResponse {
+  int64 count = 1;
+}
+
