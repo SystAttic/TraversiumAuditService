@@ -35,11 +35,10 @@ class FirebaseAuthenticationFilter(
 
             val decodedToken = firebaseAuth.verifyIdToken(token)
             val uid = decodedToken.uid
-            val tenantId = decodedToken.tenantId
 
-            TenantContext.setTenant(TenantUtils.sanitizeTenantIdForSchema(tenantId ?: "public"))
+            val tenantId = TenantUtils.desanitizeTenantIdFromSchema(TenantContext.getTenant())
 
-            val userRecord = if (tenantId != null) {
+            val userRecord = if (tenantId != "public") {
                 try {
                     val tenantAuth = firebaseAuth.tenantManager.getAuthForTenant(tenantId)
                     tenantAuth.getUser(uid)
