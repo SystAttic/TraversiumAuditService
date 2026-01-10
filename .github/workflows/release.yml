@@ -91,6 +91,9 @@ jobs:
         run: |
           git add pom.xml audit-models/pom.xml audit-service/pom.xml
           git commit -m "Release version ${{ steps.versions.outputs.release_version }}"
+          
+          git add pom.xml audit-proto/pom.xml audit-service/pom.xml
+          git commit -m "Release version ${{ steps.versions.outputs.release_version }}"
 
       - name: Create Git tag
         run: |
@@ -111,6 +114,12 @@ jobs:
       - name: Deploy audit-models to GitHub Packages
         run: |
           mvn deploy -pl audit-models -DskipTests
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Deploy audit-proto to GitHub Packages
+        run: |
+          mvn deploy -pl audit-proto -DskipTests
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
@@ -156,6 +165,9 @@ jobs:
         run: |
           git add pom.xml audit-models/pom.xml audit-service/pom.xml
           git commit -m "Prepare for next development version: ${{ inputs.next_snapshot_version }}"
+          
+          git add pom.xml audit-proto/pom.xml audit-service/pom.xml
+          git commit -m "Prepare for next development version: ${{ inputs.next_snapshot_version }}"
 
       - name: Push SNAPSHOT version to dev branch
         run: |
@@ -193,6 +205,15 @@ jobs:
             <dependency>
               <groupId>traversium</groupId>
               <artifactId>audit-models</artifactId>
+              <version>${{ steps.versions.outputs.release_version }}</version>
+            </dependency>
+            ```
+            
+            audit-proto:
+            ```xml
+            <dependency>
+              <groupId>traversium</groupId>
+              <artifactId>audit-proto</artifactId>
               <version>${{ steps.versions.outputs.release_version }}</version>
             </dependency>
             ```
